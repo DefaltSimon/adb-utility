@@ -1,6 +1,7 @@
 # coding=utf-8
 import re
-from adb.utilities import shell, OptionWizard
+
+from adb.utilities import shell_output, OptionWizard
 from adb.colors import Color
 
 
@@ -9,7 +10,7 @@ from adb.colors import Color
 ##########
 
 meta = {
-    "title": "Devices",
+    "title": "devices",
     "description": "List all devices"
 }
 
@@ -24,7 +25,7 @@ def run(**kwargs):
 
     while running:
         # 1. FIND all devices
-        resp = shell("adb devices -l").splitlines()
+        resp = shell_output("adb devices -l").splitlines()
         # Remove "List of devices attached"
         assert resp.pop(0).startswith("List of devices attached")
 

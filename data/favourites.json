@@ -1,3 +1,12 @@
 {
-  "remote": ["/storage/ext_sd/"]
+  "push": {
+    "remote": [
+      "/storage/ext_sd/"
+    ]
+  },
+  "pull": {
+    "local": [
+      "D:/Simon/"
+    ]
+  }
 }

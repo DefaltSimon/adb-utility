@@ -57,7 +57,7 @@ def main():
     plugin_callbacks.append(quit)
 
     # Show the options
-    opt = OptionWizard(Color.BOLD + "Choose your action:" + Color.END, plugin_desc, plugin_callbacks)
+    opt = OptionWizard(Color.BOLD + f"{Color.BLUE}Main Menu{Color.END}\nChoose your action:" + Color.END, plugin_desc, plugin_callbacks)
     resp = opt.run()
 
     running = True

@@ -1,7 +1,7 @@
 # coding=utf-8
-from subprocess import getoutput
-from typing import Union
+import os
 from json import loads
+from subprocess import getstatusoutput
 
 
 def is_invalid_argument(text: str) -> bool:
@@ -15,13 +15,27 @@ def quote(text: str) -> str:
         return text
 
 
-def shell(command: str) -> str:
-    return getoutput(command)
+def shell(command: str) -> bool:
+    status, resp = getstatusoutput(command)
+    return status == 0
+
+
+def shell_output(command: str) -> str:
+    status, resp = getstatusoutput(command)
+    return resp
 
 
 def get_json(file: str) -> dict:
     with open(file) as j:
         return loads(j.read())
+
+
+def get_cd_files(directory: str) -> list:
+    return [f for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))]
+
+
+def get_full_path(file: str) -> str:
+    return os.path.abspath(file)
 
 
 class OptionWizard:
