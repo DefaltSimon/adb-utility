@@ -1,14 +1,27 @@
 # coding=utf-8
 from subprocess import getoutput
 from typing import Union
+from json import loads
 
 
 def is_invalid_argument(text: str) -> bool:
     return "'" in text or '"' in text
 
 
+def quote(text: str) -> str:
+    if " " in text:
+        return f'"{text}"'
+    else:
+        return text
+
+
 def shell(command: str) -> str:
     return getoutput(command)
+
+
+def get_json(file: str) -> dict:
+    with open(file) as j:
+        return loads(j.read())
 
 
 class OptionWizard:
@@ -43,7 +56,7 @@ class OptionWizard:
         return "<{} {},{}>".format(self.__class__.__name__, self.title, self.options)
 
     # Blocking method
-    def run(self) -> int:
+    def run(self) -> str:
         self._print(self.__str__())
 
         valid = False

@@ -10,13 +10,14 @@ import importlib
 import os
 
 from adb.utilities import OptionWizard
+from adb.colors import Color
 
 log = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 
 SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
-TARGET_DIR = os.getcwd()
+CURRENT_DIR = os.getcwd()
 
 COGS_DIR = os.path.join(SCRIPT_DIR, "cogs")
 
@@ -29,7 +30,7 @@ def format_line(meta: dict) -> str:
 
 def main():
     intro = "Adb Utility"
-    print(f"{'-' * 10}\n{intro}\n{'-' * 10}")
+    print(f"{Color.BOLD}{'-' * 10}\n{intro}\n{'-' * 10}{Color.END}\n")
 
     # Loads cogs
     cog_names = [pl for pl in os.listdir(COGS_DIR)
@@ -56,14 +57,18 @@ def main():
     plugin_callbacks.append(quit)
 
     # Show the options
-    opt = OptionWizard("", plugin_desc, plugin_callbacks)
+    opt = OptionWizard(Color.BOLD + "Choose your action:" + Color.END, plugin_desc, plugin_callbacks)
     resp = opt.run()
 
     running = True
+    kwargs = {
+        "SCRIPT_DIR": SCRIPT_DIR,
+        "CURRENT_DIR": CURRENT_DIR
+    }
 
     while running:
         # Run the right cog
-        data = resp()
+        data = resp(**kwargs)
 
         if data == "back":
             resp = opt.run()

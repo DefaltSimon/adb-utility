@@ -33,7 +33,7 @@ def run(**kwargs):
             serial, product, model, device = p_devices.findall(l)[0]
             model = " ".join(model.split("_"))
 
-            devices.append(f"{Color.BOLD}[{serial}]{Color.END} {model}")
+            devices.append(f"{Color.BOLD}{Color.RED}[{serial}]{Color.END} {Color.DARKCYAN}{model}{Color.END}")
 
         # 2. DISPLAY devices
         print("Connected devices:\n")
