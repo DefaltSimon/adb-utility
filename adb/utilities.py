@@ -1,18 +1,26 @@
 # coding=utf-8
+from subprocess import getoutput
+from typing import Union
 
 
 def is_invalid_argument(text: str) -> bool:
     return "'" in text or '"' in text
 
 
-class OptionBuilder:
-    def __init__(self, title: str, options: list, printer_callback=None, **kwargs):
+def shell(command: str) -> str:
+    return getoutput(command)
+
+
+class OptionWizard:
+    def __init__(self, title: str, options: list, custom_returns: list = None, **kwargs):
         self.title = title
+
         self.options = options
+        self.custom_returns = custom_returns or list(range(1, len(options)+1))
 
         self.option_nums = list(range(1, len(self.options)+1))
 
-        self.printer = printer_callback
+        self.printer = kwargs.get("printer")
         self.input_text = kwargs.get("input_text", "> ")
 
     def generate_options(self) -> str:
@@ -30,6 +38,9 @@ class OptionBuilder:
 
     def __str__(self):
         return "{}\n{}".format(self.title, self.generate_options())
+
+    def __repr__(self):
+        return "<{} {},{}>".format(self.__class__.__name__, self.title, self.options)
 
     # Blocking method
     def run(self) -> int:
@@ -55,9 +66,21 @@ class OptionBuilder:
             # Everything is okay
             valid = True
 
-        return resp
+        return self.custom_returns[resp-1]
 
 
-# a = OptionBuilder("ayy", ["memes", "more memes", "even more"])
-# print(a.option_nums)
-# a.run()
+class ItemList:
+    def __init__(self, items: list, **kwargs):
+        self.items = items
+        self.printer = kwargs.get("printer")
+
+    def _print(self, text):
+        if self.printer:
+            self.printer(text)
+        else:
+            print(text)
+
+    def print_items(self):
+        opt = ["- {}".format(o) for o in self.items]
+
+        self._print("\n".join(opt))
