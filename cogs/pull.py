@@ -30,6 +30,8 @@ def verify_path(path: str) -> bool:
 
 
 def run(**kwargs):
+    SCRIPT_DIR = kwargs.pop("SCRIPT_DIR")
+
     intro = Color.BOLD + "Adb Pull" + Color.END
     print(f"{'#' * 10}\n{intro}\n{'#' * 10}")
 
@@ -45,7 +47,7 @@ def run(**kwargs):
                 print("Invalid path, try again.")
 
         # Choose target directory
-        favs = get_json(os.path.join(kwargs.get("SCRIPT_DIR"), "data", "favourites.json"))["pull"].get("local")
+        favs = get_json(os.path.join(SCRIPT_DIR, "data", "favourites.json"))["pull"].get("local")
         if favs:
             paths = ["."] + favs + ["Custom"]
         else:

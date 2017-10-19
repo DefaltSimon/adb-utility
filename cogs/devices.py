@@ -52,7 +52,7 @@ meta = DeviceMeta()
 p_devices = re.compile("([A-Z0-9]+)\s+device\s?(?:product:(\w+))?\s?(?:model:(\w+))?\s?(?:device:(\w+))?")
 
 
-def run(**kwargs):
+def run(**_):
     intro = "Adb Devices"
     print(f"{'-' * 11}\n{intro}\n{'-' * 11}")
 

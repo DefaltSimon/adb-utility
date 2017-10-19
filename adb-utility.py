@@ -9,7 +9,7 @@ import logging
 import importlib
 import os
 
-from adb.utilities import OptionWizard
+from adb.utilities import OptionWizard, shell
 from adb.colors import Color
 
 log = logging.getLogger(__name__)
@@ -28,16 +28,23 @@ def format_line(meta: dict) -> str:
     return f"{meta.get('title')} - {meta.get('description')}"
 
 
+def start_server():
+    print(f"{Color.BOLD}Waiting for adb daemon...{Color.END}", end="")
+    shell("adb start-server")
+    print(f"{Color.DARKCYAN}OK!{Color.END}\n\n")
+
+
 def main():
     intro = "Adb Utility"
     print(f"{Color.BOLD}{'-' * 10}\n{intro}\n{'-' * 10}{Color.END}\n")
+
+    start_server()
 
     # Loads cogs
     cog_names = [pl for pl in os.listdir(COGS_DIR)
                  if os.path.isfile(os.path.join(COGS_DIR, pl)) and pl.endswith(".py")]
 
     # Ordered "run" functions for each cog
-    plugin_desc = []
     plugin_callbacks = []
 
     for c in cog_names:
@@ -47,17 +54,17 @@ def main():
         assert hasattr(cog, "run")
         assert hasattr(cog, "meta")
 
-        cogs[name] = {"plugin": cog, "meta": cog.meta}
+        cogs[name] = cog
         plugin_callbacks.append(cog.run)
 
     def get_meta():
-        descs = []
-        for c in cogs.keys():
-            descs.append(format_line(cogs[c]["plugin"].meta))
+        desc = []
+        for m in cogs.keys():
+            desc.append(format_line(cogs[m].meta))
 
-        descs = sorted(descs)
-        descs.append("Quit")
-        return descs
+        desc = sorted(desc)
+        desc.append("Quit")
+        return desc
 
     # Add a quit option
     plugin_callbacks.append(quit)
@@ -67,19 +74,20 @@ def main():
     opt = OptionWizard(wiz_text, get_meta(), plugin_callbacks)
     resp = opt.run()
 
-    running = True
     kwargs = {
         "SCRIPT_DIR": SCRIPT_DIR,
         "CURRENT_DIR": CURRENT_DIR
     }
 
-    while running:
+    while True:
         # Run the right cog
         data = resp(**kwargs)
 
         if data == "back":
             opt = OptionWizard(wiz_text, get_meta(), plugin_callbacks)
             resp = opt.run()
+        elif data == "exit":
+            break
         else:
             return
 
