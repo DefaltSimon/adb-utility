@@ -1,5 +1,6 @@
 # coding=utf-8
 import os
+import abc
 from json import loads
 from subprocess import getstatusoutput
 
@@ -111,3 +112,25 @@ class ItemList:
         opt = ["- {}".format(o) for o in self.items]
 
         self._print("\n".join(opt))
+
+
+class Meta(metaclass=abc.ABCMeta):
+    def __init__(self):
+        self.a = 0
+
+    @property
+    def title(self):
+        """
+        Must be implemented by subclassing!
+        """
+        raise NotImplementedError
+
+    @property
+    def description(self):
+        """
+        Must be implemented by subclassing!
+        """
+        raise NotImplementedError
+
+    def get(self, item):
+        return self.__getattribute__(item)

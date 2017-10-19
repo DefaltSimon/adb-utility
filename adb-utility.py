@@ -48,16 +48,23 @@ def main():
         assert hasattr(cog, "meta")
 
         cogs[name] = {"plugin": cog, "meta": cog.meta}
-
-        plugin_desc.append(format_line(cog.meta))
         plugin_callbacks.append(cog.run)
 
+    def get_meta():
+        descs = []
+        for c in cogs.keys():
+            descs.append(format_line(cogs[c]["plugin"].meta))
+
+        descs = sorted(descs)
+        descs.append("Quit")
+        return descs
+
     # Add a quit option
-    plugin_desc.append("Quit")
     plugin_callbacks.append(quit)
 
     # Show the options
-    opt = OptionWizard(Color.BOLD + f"{Color.BLUE}Main Menu{Color.END}\nChoose your action:" + Color.END, plugin_desc, plugin_callbacks)
+    wiz_text = Color.BOLD + f"{Color.BLUE}Main Menu{Color.END}\nChoose your action:" + Color.END
+    opt = OptionWizard(wiz_text, get_meta(), plugin_callbacks)
     resp = opt.run()
 
     running = True
@@ -71,6 +78,7 @@ def main():
         data = resp(**kwargs)
 
         if data == "back":
+            opt = OptionWizard(wiz_text, get_meta(), plugin_callbacks)
             resp = opt.run()
         else:
             return
